@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: biblioteca
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass123
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: backend_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASSWORD: pass123
+      DB_NAME: biblioteca
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/usr/src/app
+      - ./backend/uploads:/usr/src/app/uploads
+
+volumes:
+  db_data:
